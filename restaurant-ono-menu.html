@@ -28,11 +28,10 @@
             -webkit-print-color-adjust: exact;
         }
 
-        /* A5サイズ設定（固定を解除し、レスポンシブかつ印刷用紙に合わせる） */
+        /* A5サイズ設定（画面表示用） */
         .menu-container {
-            width: 100%;
-            max-width: 148mm; /* A5の幅を最大値として設定 */
-            min-height: 210mm; /* A5の高さを最小値として確保 */
+            width: 148mm;
+            height: 210mm;
             background-color: var(--paper-bg);
             background-image: 
                 radial-gradient(circle at 50% 50%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.1) 100%),
@@ -236,10 +235,11 @@
                 page-break-after: always;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                width: 100%; /* 幅を用紙に合わせる */
-                max-width: none; /* 最大幅制限を解除 */
-                min-height: auto;
+                /* 印刷時は幅を用紙に合わせて自動調整 */
+                width: 100%;
+                max-width: 100%;
                 height: auto;
+                min-height: 100vh;
             }
             /* 印刷バグ回避：複雑なブレンドモードやグラデーションオーバーレイを無効化 */
             .menu-container::after {
