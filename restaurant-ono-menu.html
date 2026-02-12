@@ -10,8 +10,9 @@
         :root {
             --paper-bg: #f3e5ab;
             --ink-color: #3e3223;
+            /* 葉っぱの色を少し淡く、グレイッシュなグリーンに変更 */
             --accent-green: #6c7a52; 
-            --faded-red: #c17e6b;
+            --faded-red: #c17e6b; /* ヴィンテージ感のある赤（バレンタイン用） */
         }
 
         * {
@@ -38,8 +39,9 @@
         .menu-container {
             width: 100%;
             max-width: 148mm; /* 画面表示時の最大幅（A5相当） */
+            /* heightはautoにしつつ、aspect-ratioで比率を維持する */
             height: auto;
-            aspect-ratio: 148 / 210; /* 縦横比を維持 */
+            aspect-ratio: 148 / 210; 
             
             background-color: var(--paper-bg);
             background-image: 
@@ -91,6 +93,7 @@
             transform: rotate(10deg);
         }
 
+        /* バレンタイン装飾（ハート） */
         .valentine-decor {
             position: absolute;
             z-index: 0;
@@ -133,10 +136,11 @@
             position: relative;
         }
 
-        /* フォントサイズをコンテナ幅に応じて可変にする */
+        /* フォントサイズ調整：PC大画面での巨大化を防ぐため上限(px)を調整 */
         .logo-title {
             font-family: 'Pinyon Script', cursive;
-            font-size: clamp(24px, 10vw, 52px);
+            /* 最大値を52px -> 42px程度に抑え、画面幅に応じた変化を緩やかに */
+            font-size: clamp(24px, 9vw, 42px);
             color: var(--ink-color);
             margin-bottom: 0.2em;
             text-shadow: 0px 0px 3px rgba(255,255,255,0.8);
@@ -150,7 +154,7 @@
             font-family: 'Cormorant Garamond', serif;
             text-transform: uppercase;
             letter-spacing: 0.3em;
-            font-size: clamp(8px, 2.5vw, 11px);
+            font-size: clamp(8px, 2.2vw, 10px);
             border-bottom: 1px solid var(--ink-color);
             padding-bottom: 2px;
             display: inline-block;
@@ -162,7 +166,7 @@
         .salmon-theme {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(9px, 3vw, 12px);
+            font-size: clamp(9px, 2.5vw, 12px);
             color: var(--accent-green);
             margin-top: 4px;
             letter-spacing: 0.1em;
@@ -195,7 +199,7 @@
         .category {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(9px, 3vw, 11px);
+            font-size: clamp(9px, 2.5vw, 11px);
             color: var(--accent-green);
             margin-bottom: 2px;
             font-weight: 600;
@@ -203,7 +207,7 @@
 
         .dish-name {
             font-family: 'Noto Serif JP', serif;
-            font-size: clamp(10px, 3.5vw, 13px);
+            font-size: clamp(10px, 3vw, 13px);
             font-weight: 500;
             color: var(--ink-color);
             border-bottom: 1px dotted rgba(62, 50, 35, 0.3);
@@ -216,7 +220,7 @@
 
         .dish-desc {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(8px, 2.5vw, 10px);
+            font-size: clamp(8px, 2vw, 10px);
             color: #5c4b3a;
             margin-top: 2px;
             font-style: italic;
@@ -228,7 +232,7 @@
             z-index: 5;
             text-align: center;
             font-family: 'Pinyon Script', cursive;
-            font-size: clamp(12px, 4vw, 15px);
+            font-size: clamp(11px, 3.5vw, 14px);
             margin-top: auto;
             margin-bottom: 3%;
             color: var(--ink-color);
@@ -260,7 +264,7 @@
                 transform: none !important;
             }
 
-            /* 印刷時はブレンドモードなどの特殊効果を無効化（四角い枠が出る問題への対処） */
+            /* 印刷バグ回避：複雑なブレンドモードやグラデーションオーバーレイを無効化 */
             .menu-container::after {
                 display: none;
             }
@@ -278,19 +282,24 @@
 </head>
 <body>
 
-    <!-- SVG定義 -->
-    <svg width="0" height="0" style="position: absolute; visibility: hidden;">
+    <!-- 共通のフィルタ定義（スケッチ風） -->
+    <!-- 画面レイアウトへの干渉を防ぐため、画面外へ配置 -->
+    <svg width="0" height="0" style="position: absolute; top: -9999px; left: -9999px; visibility: hidden;">
         <defs>
             <filter id="sketch-filter" x="-20%" y="-20%" width="140%" height="140%">
                 <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise"/>
                 <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
             </filter>
         </defs>
+        <!-- ヴィンテージハートのシンボル定義 -->
         <symbol id="vintage-heart" viewBox="0 0 100 100">
              <g filter="url(#sketch-filter)" stroke="var(--faded-red)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <!-- ハートの形状 -->
                 <path d="M50,85 C20,55 5,40 5,25 C5,10 20,5 35,5 C45,5 50,15 50,15 C50,15 55,5 65,5 C80,5 95,10 95,25 C95,40 80,55 50,85 Z" />
+                <!-- 鉛筆のハッチング（陰影） -->
                 <path d="M20,25 L30,35 M15,30 L25,40 M25,20 L35,30" stroke-width="0.5" opacity="0.4" />
                 <path d="M80,25 L70,35 M85,30 L75,40" stroke-width="0.5" opacity="0.4" />
+                <!-- スケッチのラフな線 -->
                 <path d="M50,85 C25,60 10,45 10,25" stroke-width="0.5" opacity="0.7" />
                 <path d="M90,25 C90,40 75,55 50,85" stroke-width="0.5" opacity="0.7" />
             </g>
@@ -299,25 +308,30 @@
 
     <div class="menu-container">
         
-        <!-- バレンタイン装飾 -->
+        <!-- バレンタイン装飾：ハート1（ヘッダー付近） -->
         <svg class="valentine-decor heart-header" viewBox="0 0 100 100">
             <use href="#vintage-heart" />
         </svg>
+
+        <!-- バレンタイン装飾：ハート2（デザート付近） -->
         <svg class="valentine-decor heart-choco" viewBox="0 0 100 100">
             <use href="#vintage-heart" />
         </svg>
 
-        <!-- ボタニカル装飾 -->
+        <!-- 左下：リアルなオリーブの枝 -->
         <svg class="botanical-decor side-leaf-left" viewBox="0 0 300 400">
+            <!-- フィルタは共通定義を参照 -->
             <g filter="url(#sketch-filter)" stroke="var(--accent-green)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M120,400 C110,300 130,200 180,100" stroke-width="2" />
                 <path d="M180,100 C200,60 220,40 240,20" stroke-width="1.5" />
+
                 <g fill="rgba(108, 122, 82, 0.15)">
                     <path d="M120,350 C90,340 70,320 60,290 C90,295 115,310 125,340" />
                     <path d="M125,340 L70,305" stroke-width="0.5" />
                     <path d="M125,310 C160,305 180,280 190,250 C160,260 140,280 125,310" />
                     <path d="M125,310 L180,265" stroke-width="0.5" />
                 </g>
+
                 <g fill="rgba(108, 122, 82, 0.2)">
                     <path d="M135,250 C100,240 80,210 75,180 C100,190 120,210 135,240" />
                     <path d="M135,240 L85,195" stroke-width="0.5" />
@@ -326,12 +340,14 @@
                     <path d="M150,170 C120,160 100,130 95,100 C120,110 140,130 150,160" />
                     <path d="M150,160 L105,115" stroke-width="0.5" />
                 </g>
+
                 <g fill="rgba(108, 122, 82, 0.25)">
                     <path d="M170,120 C200,110 230,90 240,60 C210,70 190,90 170,110" />
                     <path d="M170,110 L230,75" stroke-width="0.5" />
                     <path d="M190,90 C160,80 140,50 135,20 C160,30 180,50 190,80" />
                     <path d="M190,80 L145,35" stroke-width="0.5" />
                 </g>
+
                 <g fill="var(--accent-green)" stroke="none">
                     <ellipse cx="125" cy="310" rx="8" ry="12" transform="rotate(-20 125 310)" opacity="0.9"/>
                     <ellipse cx="145" cy="210" rx="7" ry="10" transform="rotate(10 145 210)" opacity="0.9"/>
@@ -340,28 +356,33 @@
             </g>
         </svg>
 
+        <!-- 右上：リアルなオリーブの枝 -->
         <svg class="botanical-decor corner-leaf-right" viewBox="0 0 300 250">
             <g filter="url(#sketch-filter)" stroke="var(--accent-green)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10,240 C50,200 100,100 280,10" stroke-width="2" />
                 <path d="M150,150 C180,180 220,200 260,210" stroke-width="1.2" />
+
                 <g fill="rgba(108, 122, 82, 0.2)">
                     <path d="M50,200 C60,160 90,140 120,130 C100,160 80,190 50,200" />
                     <path d="M50,200 L110,140" stroke-width="0.5" />
                     <path d="M90,160 C80,120 100,90 130,80 C110,110 100,140 90,160" />
                     <path d="M90,160 L120,90" stroke-width="0.5" />
                 </g>
+                
                 <g fill="rgba(108, 122, 82, 0.25)">
                     <path d="M150,110 C190,100 220,70 230,40 C200,50 170,70 150,100" />
                     <path d="M150,100 L220,55" stroke-width="0.5" />
                     <path d="M200,60 C240,50 270,20 280,0 C250,10 220,30 200,60" />
                     <path d="M200,60 L270,10" stroke-width="0.5" />
                 </g>
+                
                 <g fill="rgba(108, 122, 82, 0.15)">
                      <path d="M180,180 C210,170 240,150 250,120 C220,130 200,150 180,180" />
                      <path d="M180,180 L240,135" stroke-width="0.5" />
                      <path d="M220,200 C250,190 280,170 290,140 C260,150 240,170 220,200" />
                      <path d="M220,200 L280,155" stroke-width="0.5" />
                 </g>
+
                 <g fill="var(--accent-green)" stroke="none">
                     <ellipse cx="150" cy="150" rx="7" ry="10" transform="rotate(20 150 150)" opacity="0.9"/>
                     <ellipse cx="200" cy="60" rx="6" ry="9" transform="rotate(-10 200 60)" opacity="0.9"/>
@@ -370,7 +391,7 @@
             </g>
         </svg>
 
-        <!-- サーモンイラスト -->
+        <!-- ヴィンテージサーモンイラスト -->
         <svg class="salmon-illustration" viewBox="0 0 200 100">
             <g stroke="#8b4513" fill="none" stroke-width="0.8" opacity="0.6">
                 <path d="M10,50 Q50,20 100,30 Q150,40 190,50 Q150,70 100,70 Q50,70 10,50 Z" />
