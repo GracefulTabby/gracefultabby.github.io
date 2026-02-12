@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant ONO - Vintage Menu</title>
+    <!-- クラシックな雰囲気のフォントを読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&family=Noto+Serif+JP:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #f3e5ab;
+            --ink-color: #3e3223;
+            /* 葉っぱの色を少し淡く、グレイッシュなグリーンに変更 */
+            --accent-green: #6c7a52; 
+            --faded-red: #c17e6b; /* ヴィンテージ感のある赤（バレンタイン用） */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e6e0d4;
+            font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+            color: var(--ink-color);
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* 印刷ボタンのスタイル */
+        .print-btn-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .print-btn {
+            background-color: var(--ink-color);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: opacity 0.3s;
+        }
+
+        .print-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* A5サイズ設定 */
+        .menu-container {
+            width: 148mm;
+            height: 210mm;
+            background-color: var(--paper-bg);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0.1) 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+            margin: 0 auto 40px auto; /* 下に余白を追加 */
+            padding: 12mm 15mm;
+            position: relative;
+            box-shadow: 2px 2px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, transparent 70%, rgba(80, 50, 20, 0.2) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ボタニカル装飾の透明度を下げて「薄め」に */
+        .botanical-decor {
+            position: absolute;
+            z-index: 0;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.5; /* ここで全体の薄さを調整 */
+        }
+
+        .side-leaf-left {
+            bottom: -5mm;
+            left: -10mm;
+            width: 85mm;
+            height: auto;
+            transform: rotate(-5deg);
+        }
+
+        .corner-leaf-right {
+            top: -15mm;
+            right: -15mm;
+            width: 95mm;
+            height: auto;
+            transform: rotate(10deg);
+        }
+
+        /* バレンタイン装飾（ハート） */
+        .valentine-decor {
+            position: absolute;
+            z-index: 0;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.6;
+        }
+
+        .heart-header {
+            top: 25mm;
+            right: 25mm;
+            width: 25mm;
+            transform: rotate(15deg);
+        }
+
+        .heart-choco {
+            bottom: 45mm;
+            right: 20mm;
+            width: 18mm;
+            transform: rotate(-10deg);
+        }
+
+        .salmon-illustration {
+            position: absolute;
+            bottom: 15mm;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50mm;
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+            z-index: 0;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 5mm;
+            margin-bottom: 8mm;
+            z-index: 5;
+            width: 100%;
+            position: relative;
+        }
+
+        .logo-title {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 52px;
+            color: var(--ink-color);
+            margin-bottom: 5px;
+            text-shadow: 0px 0px 3px rgba(255,255,255,0.8);
+            line-height: 1.1;
+            position: relative;
+            display: inline-block;
+            outline: none; /* 編集時の枠線を消す */
+        }
+        
+        .logo-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-size: 11px;
+            border-bottom: 1px solid var(--ink-color);
+            padding-bottom: 2px;
+            display: inline-block;
+            margin-top: 2px;
+            margin-bottom: 8px;
+            outline: none;
+        }
+
+        .salmon-theme {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 12px;
+            color: var(--accent-green);
+            margin-top: 4px;
+            letter-spacing: 0.1em;
+            outline: none;
+        }
+
+        .menu-wrapper {
+            width: 100%;
+            display: flex;
+            gap: 12mm;
+            z-index: 5;
+            flex-grow: 1;
+            margin-top: 0;
+            justify-content: center;
+        }
+
+        .menu-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 9mm;
+        }
+
+        .menu-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .category {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--accent-green);
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .dish-name {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink-color);
+            border-bottom: 1px dotted rgba(62, 50, 35, 0.3);
+            width: 100%;
+            padding-bottom: 2px;
+            background: transparent;
+            outline: none;
+        }
+
+        .dish-desc {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 10px;
+            color: #5c4b3a;
+            margin-top: 3px;
+            font-style: italic;
+            line-height: 1.2;
+            outline: none;
+        }
+
+        footer {
+            z-index: 5;
+            text-align: center;
+            font-family: 'Pinyon Script', cursive;
+            font-size: 15px;
+            margin-top: auto;
+            margin-bottom: 5mm;
+            color: var(--ink-color);
+            opacity: 0.9;
+        }
+
+        /* 印刷時の設定 */
+        @media print {
+            body { 
+                background: none; 
+                margin: 0;
+                padding: 0;
+            }
+            .print-btn-container {
+                display: none; /* 印刷ボタンを隠す */
+            }
+            .menu-container {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                width: 100%; /* 幅を合わせる */
+                height: 100vh;
+            }
+        }
+        
+        [contenteditable]:empty:before {
+            content: attr(data-placeholder);
+            color: rgba(62, 50, 35, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 共通のフィルタ定義（スケッチ風） -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="sketch-filter" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+        </defs>
+        <!-- ヴィンテージハートのシンボル定義 -->
+        <symbol id="vintage-heart" viewBox="0 0 100 100">
+             <g filter="url(#sketch-filter)" stroke="var(--faded-red)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <!-- ハートの形状 -->
+                <path d="M50,85 C20,55 5,40 5,25 C5,10 20,5 35,5 C45,5 50,15 50,15 C50,15 55,5 65,5 C80,5 95,10 95,25 C95,40 80,55 50,85 Z" />
+                <!-- 鉛筆のハッチング（陰影） -->
+                <path d="M20,25 L30,35 M15,30 L25,40 M25,20 L35,30" stroke-width="0.5" opacity="0.4" />
+                <path d="M80,25 L70,35 M85,30 L75,40" stroke-width="0.5" opacity="0.4" />
+                <!-- スケッチのラフな線 -->
+                <path d="M50,85 C25,60 10,45 10,25" stroke-width="0.5" opacity="0.7" />
+                <path d="M90,25 C90,40 75,55 50,85" stroke-width="0.5" opacity="0.7" />
+            </g>
+        </symbol>
+    </svg>
+
+    <!-- 印刷ボタンエリア（画面上部） -->
+    <div class="print-btn-container">
+        <button class="print-btn" onclick="window.print()">印刷する / PDF保存</button>
+    </div>
+
+    <div class="menu-container">
+        
+        <!-- バレンタイン装飾：ハート1（ヘッダー付近） -->
+        <svg class="valentine-decor heart-header" viewBox="0 0 100 100">
+            <use href="#vintage-heart" />
+        </svg>
+
+        <!-- バレンタイン装飾：ハート2（デザート付近） -->
+        <svg class="valentine-decor heart-choco" viewBox="0 0 100 100">
+            <use href="#vintage-heart" />
+        </svg>
+
+        <!-- 左下：リアルなオリーブの枝 -->
+        <svg class="botanical-decor side-leaf-left" viewBox="0 0 300 400">
+            <!-- フィルタは共通定義を参照 -->
+            <g filter="url(#sketch-filter)" stroke="var(--accent-green)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M120,400 C110,300 130,200 180,100" stroke-width="2" />
+                <path d="M180,100 C200,60 220,40 240,20" stroke-width="1.5" />
+
+                <g fill="rgba(108, 122, 82, 0.15)">
+                    <path d="M120,350 C90,340 70,320 60,290 C90,295 115,310 125,340" />
+                    <path d="M125,340 L70,305" stroke-width="0.5" />
+                    <path d="M125,310 C160,305 180,280 190,250 C160,260 140,280 125,310" />
+                    <path d="M125,310 L180,265" stroke-width="0.5" />
+                </g>
+
+                <g fill="rgba(108, 122, 82, 0.2)">
+                    <path d="M135,250 C100,240 80,210 75,180 C100,190 120,210 135,240" />
+                    <path d="M135,240 L85,195" stroke-width="0.5" />
+                    <path d="M145,210 C180,200 210,180 220,150 C190,160 160,180 145,210" />
+                    <path d="M145,210 L210,165" stroke-width="0.5" />
+                    <path d="M150,170 C120,160 100,130 95,100 C120,110 140,130 150,160" />
+                    <path d="M150,160 L105,115" stroke-width="0.5" />
+                </g>
+
+                <g fill="rgba(108, 122, 82, 0.25)">
+                    <path d="M170,120 C200,110 230,90 240,60 C210,70 190,90 170,110" />
+                    <path d="M170,110 L230,75" stroke-width="0.5" />
+                    <path d="M190,90 C160,80 140,50 135,20 C160,30 180,50 190,80" />
+                    <path d="M190,80 L145,35" stroke-width="0.5" />
+                </g>
+
+                <g fill="var(--accent-green)" stroke="none">
+                    <ellipse cx="125" cy="310" rx="8" ry="12" transform="rotate(-20 125 310)" opacity="0.9"/>
+                    <ellipse cx="145" cy="210" rx="7" ry="10" transform="rotate(10 145 210)" opacity="0.9"/>
+                    <ellipse cx="170" cy="110" rx="6" ry="9" transform="rotate(-15 170 110)" opacity="0.9"/>
+                </g>
+            </g>
+        </svg>
+
+        <!-- 右上：リアルなオリーブの枝 -->
+        <svg class="botanical-decor corner-leaf-right" viewBox="0 0 300 250">
+            <g filter="url(#sketch-filter)" stroke="var(--accent-green)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10,240 C50,200 100,100 280,10" stroke-width="2" />
+                <path d="M150,150 C180,180 220,200 260,210" stroke-width="1.2" />
+
+                <g fill="rgba(108, 122, 82, 0.2)">
+                    <path d="M50,200 C60,160 90,140 120,130 C100,160 80,190 50,200" />
+                    <path d="M50,200 L110,140" stroke-width="0.5" />
+                    <path d="M90,160 C80,120 100,90 130,80 C110,110 100,140 90,160" />
+                    <path d="M90,160 L120,90" stroke-width="0.5" />
+                </g>
+                
+                <g fill="rgba(108, 122, 82, 0.25)">
+                    <path d="M150,110 C190,100 220,70 230,40 C200,50 170,70 150,100" />
+                    <path d="M150,100 L220,55" stroke-width="0.5" />
+                    <path d="M200,60 C240,50 270,20 280,0 C250,10 220,30 200,60" />
+                    <path d="M200,60 L270,10" stroke-width="0.5" />
+                </g>
+                
+                <g fill="rgba(108, 122, 82, 0.15)">
+                     <path d="M180,180 C210,170 240,150 250,120 C220,130 200,150 180,180" />
+                     <path d="M180,180 L240,135" stroke-width="0.5" />
+                     <path d="M220,200 C250,190 280,170 290,140 C260,150 240,170 220,200" />
+                     <path d="M220,200 L280,155" stroke-width="0.5" />
+                </g>
+
+                <g fill="var(--accent-green)" stroke="none">
+                    <ellipse cx="150" cy="150" rx="7" ry="10" transform="rotate(20 150 150)" opacity="0.9"/>
+                    <ellipse cx="200" cy="60" rx="6" ry="9" transform="rotate(-10 200 60)" opacity="0.9"/>
+                    <ellipse cx="220" cy="200" rx="7" ry="10" transform="rotate(45 220 200)" opacity="0.9"/>
+                </g>
+            </g>
+        </svg>
+
+        <!-- ヴィンテージサーモンイラスト -->
+        <svg class="salmon-illustration" viewBox="0 0 200 100">
+            <g stroke="#8b4513" fill="none" stroke-width="0.8" opacity="0.6">
+                <path d="M10,50 Q50,20 100,30 Q150,40 190,50 Q150,70 100,70 Q50,70 10,50 Z" />
+                <path d="M40,35 Q35,50 40,65" />
+                <circle cx="25" cy="45" r="1.5" fill="#8b4513" />
+                <path d="M50,40 Q55,40 60,40 M50,45 Q55,45 60,45 M50,50 Q55,50 60,50" stroke-width="0.4" />
+                <path d="M70,38 Q75,38 80,38 M70,43 Q75,43 80,43 M70,48 Q75,48 80,48 M70,53 Q75,53 80,53" stroke-width="0.4" />
+                <path d="M90,35 Q95,35 100,35 M90,40 Q95,40 100,40 M90,45 Q95,45 100,45 M90,50 Q95,50 100,50 M90,55 Q95,55 100,55" stroke-width="0.4" />
+                <path d="M90,30 Q100,10 120,32" stroke-width="0.5" />
+                <path d="M100,70 Q110,85 130,68" stroke-width="0.5" />
+                <path d="M190,50 L180,40 M190,50 L180,60" />
+            </g>
+        </svg>
+
+        <header>
+            <div class="logo-title" contenteditable="true">Restaurant ONO</div>
+            <div class="logo-subtitle" contenteditable="true">Birthday Celebration for Nori</div>
+            <div class="salmon-theme" contenteditable="true">~ L'Énigme du Saumon ~</div>
+        </header>
+
+        <div class="menu-wrapper">
+            <!-- Left Column -->
+            <div class="menu-column">
+                <div class="menu-item">
+                    <div class="category">Amuse-bouche</div>
+                    <div class="dish-name" contenteditable="true">サーモンの一口丼</div>
+                    <div class="dish-desc" contenteditable="true">小さな器に込めたおもてなし</div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Premier Entrée</div>
+                    <div class="dish-name" contenteditable="true">サーモンのカルパッチョ</div>
+                    <div class="dish-desc" contenteditable="true">彩り野菜と共に</div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Deuxième Entrée</div>
+                    <div class="dish-name" contenteditable="true">サーモンとアボカド<br>ブロッコリーのタルタル</div>
+                    <div class="dish-desc" contenteditable="true"></div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">La Soupe</div>
+                    <div class="dish-name" contenteditable="true">十勝汁のポタージュ仕立て</div>
+                    <div class="dish-desc" contenteditable="true"></div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Le Poisson</div>
+                    <div class="dish-name" contenteditable="true">サーモンのコンフィ</div>
+                    <div class="dish-desc" contenteditable="true">しっとりと火入れした身の旨味</div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="menu-column">
+                <div class="menu-item">
+                    <div class="category">Le Granité</div>
+                    <div class="dish-name" contenteditable="true">お口直しのソルベ</div>
+                    <div class="dish-desc" contenteditable="true"></div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">La Viande</div>
+                    <div class="dish-name" contenteditable="true">牛ステーキといくら<br>〜すき焼きのスタイル〜</div>
+                    <div class="dish-desc" contenteditable="true">甘辛いソースと卵のアクセント</div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Le Fromage</div>
+                    <div class="dish-name" contenteditable="true">炙りチーズサーモン寿司</div>
+                    <div class="dish-desc" contenteditable="true">香ばしいチーズの香り</div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Grand Dessert</div>
+                    <div class="dish-name" contenteditable="true">特製チーズケーキ</div>
+                    <div class="dish-desc" contenteditable="true"></div>
+                </div>
+
+                <div class="menu-item">
+                    <div class="category">Mignardises</div>
+                    <div class="dish-name" contenteditable="true">バレンタイン・ショコラ</div>
+                    <div class="dish-desc" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Bon Appétit<br>
+            <span style="font-size: 10px; font-family: 'Cormorant Garamond', serif; text-transform: uppercase; letter-spacing: 0.1em;">Restaurant ONO</span>
+        </footer>
+    </div>
+
+</body>
+</html>
